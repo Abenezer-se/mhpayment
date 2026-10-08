@@ -1,0 +1,29 @@
+{
+  
+  "organization": {
+    "name": "መሠረተ ሕይወት ሰንበት ትምህርት ቤት",
+    "phone": "+251972321594",
+    "email": "dsmedihanealem.ss@gmail.com",
+    "address": "Dire Dawa"
+  },
+  "systemStartYear": 2019,
+  "billPagumen": false,
+  "paymentCategories": [
+    { "name": "ተማሪ", "amount": 15 },
+    { "name": "ሰራተኛ", "amount": 30 }
+  ],
+  "departments": [
+"ትምህርት እና ሥልጠና ክፍል",
+"መዝሙር፣ በዓላት እና ሥነ-ጥበብ ክፍል",
+"መረጃ እና ውስጥ ግንኙነት ክፍል",
+"መርሐ-ግብር እና ጉባኤያት ክፍል",
+"የሰው ሀብት አስተዳደር ክፍል",
+"በጀት እና ንብረት አስተዳደር ክፍል",
+"ልማት እና በጎ አድራጎት ክፍል"
+  ],
+  "memberTypes": [
+    "መደበኛ አባል",
+    "ነባር አባል"
+    
+  ]
+}

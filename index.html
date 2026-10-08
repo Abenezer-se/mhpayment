@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="am" translate="no" class="notranslate">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="google" content="notranslate" />
+    <meta http-equiv="Content-Language" content="am" />
+    <meta name="theme-color" content="#17426b" />
+    <meta name="application-name" content="መሠረተ ሕይወት" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="መሠረተ ሕይወት" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/api/public/icon-180.png" />
+    <title>መሠረተ ሕይወት ሰንበት ትምህርት ቤት</title>
+    <script>
+      // apply the saved theme before the first paint (no flash)
+      try { if (localStorage.getItem("mh_theme") === "dark") document.documentElement.dataset.theme = "dark"; } catch (e) {}
+    </script>
+  </head>
+  <body class="notranslate" translate="no">
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
