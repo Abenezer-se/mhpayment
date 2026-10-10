@@ -14,6 +14,6 @@ export const handler = async (event: any, context: any) => {
   try {
     const { connectLambda } = await import("@netlify/blobs");
     connectLambda(event);
-  } catch { /* not running on Netlify */ }
+  } catch (e) { if (process.env.NETLIFY || process.env.AWS_LAMBDA_FUNCTION_NAME) console.error("connectLambda failed:", e); }
   return (app as any)(event, context);
 };

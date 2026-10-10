@@ -8,6 +8,25 @@ import {
 } from "../ui";
 
 // ───────── ቅንብር ─────────
+/** PDF and Excel need a bitmap, so an SVG logo is converted to a sharp PNG here, in the browser, before it is uploaded. */
+async function prepareLogo(file: File): Promise<File> {
+  if (file.type !== "image/svg+xml" && !/\.svg$/i.test(file.name)) return file;
+  const url = URL.createObjectURL(file);
+  try {
+    const img = new Image();
+    img.src = url;
+    await img.decode();
+    const w = img.naturalWidth || 512, h = img.naturalHeight || 512;
+    const scale = 800 / Math.max(w, h);
+    const canvas = document.createElement("canvas");
+    canvas.width = Math.round(w * scale); canvas.height = Math.round(h * scale);
+    canvas.getContext("2d")!.drawImage(img, 0, 0, canvas.width, canvas.height);
+    const blob: Blob | null = await new Promise((r) => canvas.toBlob(r, "image/png"));
+    if (!blob) throw new Error("convert");
+    return new File([blob], "logo.png", { type: "image/png" });
+  } finally { URL.revokeObjectURL(url); }
+}
+
 export function SettingsPage() {
   const [tab, setTab] = useState<"prices" | "departments" | "member-types" | "org">("prices");
   const tabs = [["prices", "የክፍያ ቅንብር"], ["departments", "ክፍሎች"], ["member-types", "የአባልነት አይነቶች"], ["org", "የድርጅት መረጃ"]] as const;
@@ -172,7 +191,7 @@ function OrgTab() {
     <>
       <div className="panel">
         <div className="panel-title"><h2>አርማ</h2></div>
-        <div className="row"><Logo size={72} /><input ref={fileRef} type="file" hidden accept="image/png,image/jpeg" onChange={(e) => upload(e.target.files?.[0])} /><Button variant="secondary" onClick={() => fileRef.current?.click()}>አርማ ቀይር</Button><span className="small muted">PNG ወይም JPG፣ ከ2 ሜጋባይት በታች። በመግቢያ ገጽ፣ በዳሽቦርዶች፣ በPDF፣ በExcel እና በክፍያ ማረጋገጫ ላይ ይታያል።</span></div>
+        <div className="row"><Logo size={72} /><input ref={fileRef} type="file" hidden accept="image/svg+xml,image/png,image/jpeg,.svg" onChange={async (e) => { const f = e.target.files?.[0]; e.target.value = ""; if (!f) return; try { await upload(await prepareLogo(f)); } catch { toast("SVG ፋይሉን ወደ PNG መቀየር አልተቻለም። በአርማው ውስጥ ያሉ ጽሑፎችን ወደ መስመር (outline) ቀይረው ደግመው ይሞክሩ።", "error"); } }} /><Button variant="secondary" onClick={() => fileRef.current?.click()}>አርማ ቀይር</Button><span className="small muted">SVG፣ PNG ወይም JPG፤ ከ2 ሜጋባይት በታች። SVG ሲመረጥ በራሱ ወደ PNG ይቀየራል። በመግቢያ ገጽ፣ በዳሽቦርዶች፣ በPDF፣ በExcel እና በክፍያ ማረጋገጫ ላይ ይታያል።</span></div>
       </div>
       <form className="panel" onSubmit={save}>
         <div className="panel-title"><h2>የድርጅት መረጃ</h2></div>

@@ -8,6 +8,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { env } from "../config";
+import { AppError } from "./errors";
 
 export interface FileStorage {
   put(key: string, data: Buffer): Promise<void>;
@@ -30,9 +31,13 @@ class LocalStorage implements FileStorage {
 class NetlifyBlobStorage implements FileStorage {
   private async store() {
     const { getStore } = await import("@netlify/blobs");
-    return getStore({ name: "uploads", consistency: "strong" });
+    // Default consistency on purpose: Netlify's function mode gives no 'uncachedEdgeURL', so "strong" made EVERY save/read fail.
+    return getStore("uploads");
   }
-  async put(key: string, data: Buffer) { await (await this.store()).set(key, new Uint8Array(data).buffer as ArrayBuffer); }
+  async put(key: string, data: Buffer) {
+    try { await (await this.store()).set(key, new Uint8Array(data).buffer as ArrayBuffer); }
+    catch (e) { console.error("Netlify Blobs put failed:", e); throw new AppError(500, "ፋይሉን በማከማቻ ውስጥ ማስቀመጥ አልተቻለም። እባክዎ ደግመው ይሞክሩ፤ ካልተሳካ አስተዳዳሪውን ያነጋግሩ።", "STORAGE"); }
+  }
   async get(key: string) {
     const ab = await (await this.store()).get(key, { type: "arrayBuffer" });
     return ab ? Buffer.from(ab) : null;
